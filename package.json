@@ -33,7 +33,7 @@
     "ts-node-dev": "^2.0.0"
   },
   "scripts": {
-    "build": "nest build",
+    "build": "npx nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
     "start:prod": "node dist/main",
