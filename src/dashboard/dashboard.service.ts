@@ -6,20 +6,53 @@ export class DashboardService {
   constructor(private prisma: PrismaService) {}
 
   async stats() {
-    const [categories, photos, leads, bookings, revenue] = await Promise.all([
-      this.prisma.category.count(),
-      this.prisma.photo.count(),
-      this.prisma.lead.count(),
-      this.prisma.booking.count(),
-      this.prisma.finance.aggregate({ _sum: { amount: true } }),
-    ]);
+    const [categories, photos, leads, bookings, finances, upcomingBookings] =
+      await Promise.all([
+        this.prisma.category.count(),
+
+        this.prisma.photo.count({
+          where: { isActive: true }, // 🔥 mejor práctica
+        }),
+
+        this.prisma.lead.count(),
+
+        this.prisma.booking.count(),
+
+        this.prisma.finance.findMany(), // 🔥 para separar pagado/pendiente
+
+        this.prisma.booking.findMany({
+          where: {
+            date: {
+              gte: new Date(), // 🔥 futuras
+            },
+          },
+          orderBy: { date: "asc" },
+          take: 5, // 🔥 como en la UI
+        }),
+      ]);
+
+    // 🔥 separar ingresos
+    const revenuePaid = finances
+      .filter((f) => f.status === "PAID")
+      .reduce((acc, f) => acc + f.amount, 0);
+
+    const revenuePending = finances
+      .filter((f) => f.status === "PENDING")
+      .reduce((acc, f) => acc + f.amount, 0);
 
     return {
       categories,
       photos,
       leads,
       bookings,
-      revenue: revenue._sum.amount || 0,
+
+      revenuePaid,
+      revenuePending,
+
+      // 🔥 mantener compatibilidad
+      revenue: revenuePaid + revenuePending,
+
+      upcomingBookings,
     };
   }
 }

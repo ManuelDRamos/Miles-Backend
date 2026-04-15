@@ -9,6 +9,11 @@ import { ContentModule } from "./src/content/content.module";
 import { DashboardModule } from "./src/dashboard/dashboard.module";
 import { FinancesModule } from "./src/finance/finance.module";
 import { LeadsModule } from "./src/leads/leads.module";
+import { PlansModule } from "./src/plans/plans.module";
+import { SettingsModule } from "./src/settings/settings.module";
+import { SiteContentModule } from "./src/site-content/site-content.module";
+import { StatsModule } from "./src/stats/stats.module";
+import { UsersModule } from "./src/users/users.module";
 
 @Module({
   imports: [
@@ -22,6 +27,11 @@ import { LeadsModule } from "./src/leads/leads.module";
     BookingsModule,
     FinancesModule,
     DashboardModule,
+    PlansModule,
+    SettingsModule,
+    SiteContentModule,
+    StatsModule,
+    UsersModule,
   ],
 })
 export class AppModule {}

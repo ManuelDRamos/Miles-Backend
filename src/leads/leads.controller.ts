@@ -10,7 +10,9 @@ import {
 import { LeadsService } from "./leads.service";
 import { LeadStatus } from "@prisma/client";
 import { JwtAuthGuard } from "../auth/jwt/jwt-auth.guard";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Leads")
 @Controller()
 export class LeadsController {
   constructor(private service: LeadsService) {}

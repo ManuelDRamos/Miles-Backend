@@ -10,8 +10,18 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  // 🔥 REGEX
+  private emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  private passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+
   // ✅ Validar usuario
   async validateUser(email: string, password: string) {
+    // 🔒 SOLO ADMIN
+    if (email !== process.env.ADMIN_EMAIL) {
+      throw new UnauthorizedException("No autorizado");
+    }
+
     const user = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -31,6 +41,30 @@ export class AuthService {
 
   // ✅ REGISTER
   async register(email: string, password: string) {
+    // 🔒 VALIDAR EMAIL
+    if (!this.emailRegex.test(email)) {
+      throw new UnauthorizedException("Email inválido");
+    }
+
+    // 🔒 VALIDAR PASSWORD
+    if (!this.passwordRegex.test(password)) {
+      throw new UnauthorizedException(
+        "La contraseña debe tener mínimo 8 caracteres, mayúscula, minúscula, número y símbolo",
+      );
+    }
+
+    // 🔥 SOLO PERMITIR UN USUARIO
+    const existingAnyUser = await this.prisma.user.findFirst();
+
+    if (existingAnyUser) {
+      throw new UnauthorizedException("Registro deshabilitado");
+    }
+
+    // 🔒 SOLO ADMIN EMAIL
+    if (email !== process.env.ADMIN_EMAIL) {
+      throw new UnauthorizedException("No autorizado");
+    }
+
     const existingUser = await this.prisma.user.findUnique({
       where: { email },
     });
@@ -56,6 +90,11 @@ export class AuthService {
 
   // ✅ LOGIN
   async login(email: string, password: string) {
+    // 🔒 SOLO ADMIN
+    if (email !== process.env.ADMIN_EMAIL) {
+      throw new UnauthorizedException("No autorizado");
+    }
+
     const user = await this.validateUser(email, password);
 
     const payload = {

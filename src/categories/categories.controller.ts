@@ -10,7 +10,9 @@ import {
 } from "@nestjs/common";
 import { CategoriesService } from "./categories.service";
 import { JwtAuthGuard } from "../auth/jwt/jwt-auth.guard";
+import { ApiTags } from "@nestjs/swagger";
 
+@ApiTags("Categories")
 @Controller("categories")
 export class CategoriesController {
   constructor(private service: CategoriesService) {}
