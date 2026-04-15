@@ -14,6 +14,7 @@ import { SettingsModule } from "./src/settings/settings.module";
 import { SiteContentModule } from "./src/site-content/site-content.module";
 import { StatsModule } from "./src/stats/stats.module";
 import { UsersModule } from "./src/users/users.module";
+import { AppController } from "./src/app.controller";
 
 @Module({
   imports: [
@@ -33,5 +34,8 @@ import { UsersModule } from "./src/users/users.module";
     StatsModule,
     UsersModule,
   ],
+})
+@Module({
+  controllers: [AppController],
 })
 export class AppModule {}

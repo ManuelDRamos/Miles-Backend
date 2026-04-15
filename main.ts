@@ -18,6 +18,10 @@ async function bootstrap() {
     next();
   });
 
+  app.enableCors({
+    origin: [process.env.FRONTEND_URL, process.env.DASHBOARD_URL],
+  });
+
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
